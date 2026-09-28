@@ -4,8 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
-	"log/slog"
 	"math"
 	"sort"
 	"strings"
@@ -645,14 +643,10 @@ func (idx *InvertedIndex) calculateBM25Score(docID int, queryTerms []string) flo
 //
 // Step 5: Return top 3: [Doc5, Doc1, Doc2]
 func (idx *InvertedIndex) RankBM25(query string, maxResults int) []Match {
-	slog.Info("BM25 ranking", slog.String("query", query))
-
 	tokens := Analyze(query)
 	if len(tokens) == 0 {
 		return []Match{}
 	}
-
-	slog.Info("search tokens", slog.String("tokens", fmt.Sprintf("%v", tokens)))
 
 	// Find all candidate documents (documents containing at least one query term)
 	candidates := idx.findCandidateDocuments(tokens)
@@ -787,16 +781,12 @@ func (idx *InvertedIndex) sortMatchesByScore(matches []Match) {
 //
 // Final step: Return top K results
 func (idx *InvertedIndex) RankProximity(query string, maxResults int) []Match {
-	slog.Info("proximity ranking", slog.String("query", query))
-
 	// STEP 1: Tokenize the query (same as indexing)
 	tokens := Analyze(query)
 	if len(tokens) == 0 {
 		// Empty query → no results
 		return []Match{}
 	}
-
-	slog.Info("search tokens", slog.String("tokens", fmt.Sprintf("%v", tokens)))
 
 	// STEP 2: Find and score all covers
 	results := idx.collectProximityMatches(tokens)

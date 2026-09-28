@@ -29,7 +29,6 @@ package blaze
 
 import (
 	"errors"
-	"log/slog"
 	"sync"
 
 	"github.com/RoaringBitmap/roaring"
@@ -210,8 +209,6 @@ func NewInvertedIndex() *InvertedIndex {
 func (idx *InvertedIndex) Index(docID int, document string) {
 	idx.mu.Lock()         // Acquire lock - only one goroutine can index at a time
 	defer idx.mu.Unlock() // Release lock when function returns (even if it panics)
-
-	slog.Info("indexing document", slog.Int("docID", docID))
 
 	// STEP 1: Break document into searchable tokens
 	// Example: "The Quick Brown Fox!" → ["quick", "brown", "fox"]
